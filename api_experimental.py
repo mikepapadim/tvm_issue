@@ -41,21 +41,21 @@ def evaluate_vm_runtime_style2(batch_size):
     with tvm.transform.PassContext(opt_level=level):
         print(mod)        
 
-
-        executor = relay.build_module.create_executor("vm", mod, tvm.cpu(0), target, params)
+        # mod = tvm.IRModule.from_expr(relay.build_module.bind_params_by_name(mod["main"], params))
+        # executor = relay.build_module.create_executor("vm", mod, tvm.cpu(0), target, params)
+        executor = relay.build_module.create_executor("vm", mod, tvm.cpu(0), target)
 
         input_shape = (batch_size, 1024)
         data_tvm = tvm.nd.array((np.random.uniform(size=input_shape)).astype(dtype))
         input_list = [data_tvm]
         for i in range(warm_iterations):    # warm up
-            executor.evaluate()(data_tvm)
+            executor.evaluate()(data_tvm, **params)
         start_time = time.time()
         for i in range(measurements):
-            executor.evaluate()(data_tvm)
+            executor.evaluate()(data_tvm, **params)
         end_time = time.time()
         tvm_time = end_time - start_time
         print("*** VM style2 runtime time elapsed", tvm_time)
-        tvm_time=0
         print("\n")
     return tvm_time
 
@@ -72,4 +72,5 @@ def build_net(batch_size):
 vm_1_time = evaluate_vm_runtime_style1(1)
 
 vm_2_time = evaluate_vm_runtime_style2(1)
+
 print("API 2 is {} times slower than API 1".format(vm_2_time/vm_1_time))

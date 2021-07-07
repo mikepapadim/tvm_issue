@@ -1,0 +1,20 @@
+diff --git a/python/tvm/relay/backend/vm.py b/python/tvm/relay/backend/vm.py
+index 363ff893d..891d7a4ec 100644
+--- a/python/tvm/relay/backend/vm.py
++++ b/python/tvm/relay/backend/vm.py
+@@ -20,6 +20,7 @@ The Relay Virtual Machine.
+ 
+ Implements a Python interface to compiling and executing on the Relay VM.
+ """
++from sys import executable
+ import numpy as np
+ 
+ import tvm
+@@ -276,6 +277,7 @@ class VMExecutor(Executor):
+         self.device = device
+         self.target = target
+         self.executable = compile(mod, target)
++        print(self.executable.bytecode)
+         self.vm = vm_rt.VirtualMachine(self.executable, device)
+ 
+     def _make_executor(self, expr=None):

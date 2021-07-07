@@ -1,7 +1,19 @@
 # Issue Info
 
+There is a missmatch in the overall performance  when using the 2 APIs in TVM.
+`api_experimental.py' contains a minimal tests of these two API with the usage available in Tutorials. 
+
+API_2:
+```
+vm_executor = relay.create_executor("vm", mod, tvm.cpu(0), target)
+vm_executor.evaluate()(input_data, **params)
+```
 
 
+With `opt_level=3' there is bytecodes and optimizations passes are not identical as expected.
+The issue is that `params` are not passed properly and prevent optimizations related with EA and constant foldings.
+
+Debug Output:
 ```
 def @main(%data: Tensor[(1, 1024), float32], %fc0_weight: Tensor[(512, 1024), float32], %fc0_bias: Tensor[(512), float32], %fc1_weight: Tensor[(256, 512), float32], %fc1_bias: Tensor[(256), float32], %fc2_weight: Tensor[(128, 256), float32], %fc2_bias: Tensor[(128), float32]) -> Tensor[(1, 128), float32] {
   %0 = nn.dense(%data, %fc0_weight, units=512) /* ty=Tensor[(1, 512), float32] */;

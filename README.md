@@ -1,7 +1,7 @@
 # Issue Info
 
 There is a missmatch in the overall performance  when using the 2 APIs in TVM.
-`api_experimental.py' contains a minimal tests of these two API with the usage available in Tutorials. 
+`api_experimental.py` contains a minimal tests of these two API with the usage available in Tutorials. 
 
 API_2:
 ```
@@ -10,7 +10,7 @@ vm_executor.evaluate()(input_data, **params)
 ```
 
 
-With `opt_level=3' there is bytecodes and optimizations passes are not identical as expected.
+With `opt_level=3` there is bytecodes and optimizations passes are not identical as expected.
 The issue is that `params` are not passed properly and prevent optimizations related with EA and constant foldings.
 
 Debug Output:
@@ -22,7 +22,7 @@ def @main(%data: Tensor[(1, 1024), float32], %fc0_weight: Tensor[(512, 1024), fl
   %3 = nn.bias_add(%2, %fc1_bias, axis=-1) /* ty=Tensor[(1, 256), float32] */;
   %4 = nn.dense(%3, %fc2_weight, units=128) /* ty=Tensor[(1, 128), float32] */;
   nn.bias_add(%4, %fc2_bias, axis=-1) /* ty=Tensor[(1, 128), float32] */
-}
+}bytecode_print.patch
 
 One or more operators have not been tuned. Please tune your model for better performance. Use DEBUG logging level to see more details.
 VM Function[0]: main(data)
